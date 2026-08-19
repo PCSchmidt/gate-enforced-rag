@@ -1,8 +1,10 @@
 # Status
 
 **Phase:** 0 — Scaffolding
-**Date:** 2026-08-19
+**Date:** 2026-08-19 (family paused)
+**HEAD:** `8b50ba0`
+**Family handoff:** [portfolio-kit docs/STATUS.md](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/STATUS.md)
 
-Documentation only. Shared contracts live in [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit). Implementation has not started.
+Documentation only. Contracts are published. Implementation has not started.
 
-Next: wait for portfolio-kit `main` to be the published contract source, then follow this repo's README planned phases.
+**Next:** after the bake-off golden set exists so RAG can share fixtures. Do not start red/blue from here.

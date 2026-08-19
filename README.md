@@ -2,7 +2,7 @@
 
 A Haystack / LlamaIndex RAG pipeline whose user-facing answer cannot ship until a Meridian-style Evaluator gate passes.
 
-**Status:** Scaffolding – Phase 0
+**Status:** Scaffolding – Phase 0 (family paused 2026-08-19)
 
 Built on Meridian’s gate + independent Evaluator contracts. Optional second stage: federated synthesis across public silos with contradiction resolution.
 
