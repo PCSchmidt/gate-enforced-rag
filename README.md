@@ -1,10 +1,10 @@
 # gate-enforced-rag
 
-A Haystack / LlamaIndex RAG pipeline whose user-facing answer cannot ship until a Meridian-style Evaluator gate passes.
+A RAG pipeline whose user-facing answer cannot ship until a Meridian-style Evaluator gate passes.
 
-**Status:** Scaffolding – Phase 0 (family paused 2026-08-19)
+**Status:** Phase 1 — mechanical single-source RAG
 
-Built on Meridian’s gate + independent Evaluator contracts. Optional second stage: federated synthesis across public silos with contradiction resolution.
+Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword retrieve + extractive citations over one public corpus. It does not load Haystack, LlamaIndex, or an LLM. Federated synthesis across public silos is Phase 3.
 
 ## Relation to Meridian
 
@@ -21,26 +21,42 @@ The Evaluator is a post-generation / pre-delivery component. Corrections memory 
 
 ```mermaid
 flowchart LR
-    Q[Query] --> R[Router]
-    R --> S1[Retriever silo A]
-    R --> S2[Retriever silo B]
-    S1 --> Syn[Synthesis agent]
-    S2 --> Syn
+    Q[Query] --> R[Keyword retriever]
+    R --> Syn[Extractive synthesis]
     Syn --> Gate[Evaluator gate]
     Gate -->|pass| Out[User answer + citations]
-    Gate -->|fail| Mem[Corrections memory]
+    Gate -->|fail| Mem[Issues / no delivery]
 ```
 
-Public silos (later): satellite / NOTAM fixtures, GSA-style manifests, your public repos, Wikipedia / arXiv.
+Phase 1 uses a mechanical proxy for `R`/`Syn` (keyword overlap + cited snippets). Haystack / LlamaIndex adapters are Phase 2. Public silos (later): satellite / NOTAM fixtures, GSA-style manifests, your public repos, Wikipedia / arXiv.
+
+## Develop
+
+```sh
+npm test
+npm run eval
+npm run answer -- fixtures/query-stub.json
+```
+
+Requires Node.js 20+. No dependencies, no network, no GPU. `--llm`, `--openai`, `--haystack`, `--llamaindex`, `--multi-source`, `--federated`, `--github-write`, `--comment`, and `--issue` are refused.
 
 ## Planned phases
 
-1. Single-source RAG over one public corpus
-2. Evaluator gate before delivery
+1. Single-source RAG over one public corpus *(this increment; includes the Evaluator gate)*
+2. Haystack / LlamaIndex adapter, still gated before delivery
 3. Multi-source router + contradiction resolution
 4. Observability + federated eval set
 5. Optional expose as a dsh tool / plugin
-
+```
+CONTRACT.md
+SPEC.md
+src/answer.js
+src/retrieve.js
+src/corpus.js
+eval/cases.json
+fixtures/corpus/
+tests/
+```
 ## Public / unclassified data only
 
 No JPO / F-35 / internal document dumps. Cite sources in `fixtures/SOURCES.md` when added.

@@ -1,0 +1,231 @@
+{
+  "project": "gate-enforced-rag",
+  "runtime": "mechanical-rag",
+  "rubric": "https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/EVAL_RUBRIC_TEMPLATE.md",
+  "target_gate_catch": 0.85,
+  "split": "held-out-fixtures",
+  "cases": [
+    {
+      "case_id": "GER-001",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "query": "What is a gate pass?"
+    },
+    {
+      "case_id": "GER-002",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "query": "What data is allowed under the public unclassified policy?"
+    },
+    {
+      "case_id": "GER-003",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "query": "How does the independent evaluator return a verdict?"
+    },
+    {
+      "case_id": "GER-004",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "query": "Must user-facing answers cite retrieved snippets?"
+    },
+    {
+      "case_id": "GER-005",
+      "kind": "bad",
+      "failure_mode": "github_write",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": true,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-006",
+      "kind": "bad",
+      "failure_mode": "live_llm",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "openai",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": true
+      }
+    },
+    {
+      "case_id": "GER-007",
+      "kind": "bad",
+      "failure_mode": "extra_entity",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "query": "F-35 overlay"
+    },
+    {
+      "case_id": "GER-008",
+      "kind": "bad",
+      "failure_mode": "empty_retrieval",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "query": "zzzz-unknown-token"
+    },
+    {
+      "case_id": "GER-009",
+      "kind": "bad",
+      "failure_mode": "bad_schema",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v0",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-010",
+      "kind": "bad",
+      "failure_mode": "stub_as_done",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "TODO later [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-011",
+      "kind": "bad",
+      "failure_mode": "missing_citation",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint.",
+        "citations": [],
+        "github_write": false,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-012",
+      "kind": "bad",
+      "failure_mode": "webhook_posted",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "webhook_posted": true
+      }
+    },
+    {
+      "case_id": "GER-013",
+      "kind": "bad",
+      "failure_mode": "framework",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "haystack",
+        "haystack": true,
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-014",
+      "kind": "bad",
+      "failure_mode": "self_grade",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "generator_self_score": 9.9
+      }
+    },
+    {
+      "case_id": "GER-015",
+      "kind": "bad",
+      "failure_mode": "multi_source",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "federated": true
+      }
+    },
+    {
+      "case_id": "GER-016",
+      "kind": "bad",
+      "failure_mode": "uncited_claim",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [not-in-hits]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
+    }
+  ]
+}

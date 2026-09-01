@@ -1,0 +1,27 @@
+{
+  "name": "gate-enforced-rag",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mechanical single-source RAG whose user-facing answer cannot ship until an Evaluator gate passes. Haystack / LlamaIndex is Phase 2.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "eval": "node eval/run.js",
+    "answer": "node src/run.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PCSchmidt/gate-enforced-rag.git"
+  },
+  "homepage": "https://github.com/PCSchmidt/gate-enforced-rag",
+  "license": "MIT",
+  "keywords": [
+    "rag",
+    "evaluator",
+    "meridian",
+    "portfolio-kit"
+  ]
+}
