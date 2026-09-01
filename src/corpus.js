@@ -1,5 +1,5 @@
 /**
- * Public / synthetic single-source corpus for Phase 1.
+ * Public / synthetic single-source corpus.
  * No Wikipedia scrape, no network, no program-of-record text.
  */
 

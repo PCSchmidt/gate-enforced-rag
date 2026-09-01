@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Held-out gate eval for gate-enforced-rag Phase 1.
+ * Held-out gate eval for gate-enforced-rag Phase 2.
  *   npm run eval
  */
 
@@ -30,7 +30,11 @@ export function runEval(catalog, opts = {}) {
   for (const testCase of catalog.cases) {
     const gated = testCase.answer
       ? gateAnswer(testCase.answer)
-      : answer(testCase.query, { now: '2026-09-01T12:00:00.000Z' })
+      : answer(testCase.query, {
+        now: '2026-09-01T12:00:00.000Z',
+        haystack: testCase.haystack === true,
+        llamaindex: testCase.llamaindex === true,
+      })
     const agreed = verdictMatches(testCase.expect_verdict, gated.verdict)
       && gated.act === testCase.expect_act
     if (agreed) agreementHits += 1
@@ -72,7 +76,7 @@ export function runEval(catalog, opts = {}) {
     },
     target_gate_catch: catalog.target_gate_catch ?? 0.85,
     cases: rows,
-    next: 'Phase 2: Haystack / LlamaIndex adapter still gated before delivery. Do not start red/blue.',
+    next: 'Phase 3: multi-source router + contradiction resolution. Do not start red/blue.',
   }
   report.ok = (report.metrics.D3_gate_catch_rate ?? 0) >= report.target_gate_catch
     && report.metrics.verdict_agreement === 1

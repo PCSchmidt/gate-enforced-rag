@@ -1,28 +1,30 @@
 /**
- * Phase 1 mechanical single-source RAG.
+ * Mechanical single-source RAG + Phase 2 CI-safe adapters.
  * Extractive synthesis + Evaluator gate before delivery.
- * Does not load Haystack, LlamaIndex, or an LLM.
+ * Does not pip-install Haystack / LlamaIndex or call an LLM.
  */
 
+import { resolveAdapter, retrieveWithAdapter } from './adapters.js'
 import { FORBIDDEN, STUB } from './corpus.js'
-import { retrieve } from './retrieve.js'
+
+export { refuseLiveFramework } from './adapters.js'
 
 export const ANSWER_SCHEMA = 'gate-enforced-rag.answer.v1'
 
 export function refuseGitHubWrite(action = 'write') {
-  const error = new Error(`GitHub ${action} refused: gate-enforced-rag Phase 1 is local retrieval only`)
+  const error = new Error(`GitHub ${action} refused: gate-enforced-rag is local retrieval only`)
   error.code = 'github_write_refused'
   throw error
 }
 
 export function refuseLiveLlm(action = 'llm') {
-  const error = new Error(`Live ${action} refused: Phase 1 is mechanical extractive RAG. Haystack / LlamaIndex / LLM is Phase 2.`)
+  const error = new Error(`Live ${action} refused: Phase 2 adapters stay extractive. Live LLM is out of scope.`)
   error.code = 'live_llm_refused'
   throw error
 }
 
 export function refuseFramework(name = 'haystack') {
-  const error = new Error(`${name} refused: Phase 1 is mechanical-keyword. Adapters are Phase 2.`)
+  const error = new Error(`${name} package refused: Phase 2 is a CI-safe adapter. pip/npm Haystack / LlamaIndex is out of scope.`)
   error.code = 'framework_refused'
   throw error
 }
@@ -34,6 +36,7 @@ export function refuseMultiSource() {
 }
 
 export function synthesize(query, retrieval, opts = {}) {
+  const adapter = opts.adapter || resolveAdapter(opts)
   const hits = retrieval?.hits || []
   const citations = hits.map((hit) => ({
     id: hit.id,
@@ -48,7 +51,10 @@ export function synthesize(query, retrieval, opts = {}) {
   return {
     schema: ANSWER_SCHEMA,
     model: 'mechanical-rag',
-    backend: 'mechanical-keyword',
+    backend: adapter.id,
+    adapter: adapter.id,
+    family: adapter.family,
+    pipeline: adapter.pipeline,
     observed_at: opts.now ?? new Date().toISOString(),
     query: String(query || ''),
     retrieved_n: retrieval?.retrieved_n ?? hits.length,
@@ -56,8 +62,10 @@ export function synthesize(query, retrieval, opts = {}) {
     text,
     citations,
     live_llm: false,
-    haystack: false,
-    llamaindex: false,
+    live_haystack: false,
+    live_llamaindex: false,
+    haystack: adapter.family === 'haystack',
+    llamaindex: adapter.family === 'llamaindex',
     github_write: false,
     webhook_posted: false,
     multi_source: false,
@@ -80,10 +88,16 @@ export function gateAnswer(report) {
     issues.push({ severity: 'high', code: 'webhook_posted', message: 'RAG must not post webhooks' })
   }
   if (report?.live_llm || report?.backend === 'openai' || report?.backend === 'llm') {
-    issues.push({ severity: 'high', code: 'live_llm', message: 'Phase 1 must not call a live LLM' })
+    issues.push({ severity: 'high', code: 'live_llm', message: 'Must not call a live LLM' })
   }
-  if (report?.haystack || report?.llamaindex || report?.backend === 'haystack' || report?.backend === 'llamaindex') {
-    issues.push({ severity: 'high', code: 'framework', message: 'Phase 1 must not load Haystack or LlamaIndex' })
+  if (report?.live_haystack || report?.live_llamaindex || report?.backend === 'haystack' || report?.backend === 'llamaindex') {
+    issues.push({ severity: 'high', code: 'framework', message: 'Live Haystack / LlamaIndex packages are refused' })
+  }
+  if (report?.haystack && report?.backend !== 'haystack-adapter') {
+    issues.push({ severity: 'high', code: 'framework', message: 'haystack flag requires haystack-adapter backend' })
+  }
+  if (report?.llamaindex && report?.backend !== 'llamaindex-adapter') {
+    issues.push({ severity: 'high', code: 'framework', message: 'llamaindex flag requires llamaindex-adapter backend' })
   }
   if (report?.multi_source || report?.federated) {
     issues.push({ severity: 'high', code: 'multi_source', message: 'Phase 1 is single-source only' })
@@ -135,9 +149,8 @@ export function answer(query, opts = {}) {
   if (opts.llm === true || opts.openai === true || opts.liveLlm === true) {
     refuseLiveLlm()
   }
-  if (opts.haystack === true) refuseFramework('haystack')
-  if (opts.llamaindex === true) refuseFramework('llamaindex')
   if (opts.multiSource === true || opts.federated === true) refuseMultiSource()
-  const retrieval = retrieve(query, opts)
-  return gateAnswer(synthesize(query, retrieval, opts))
+  const adapter = resolveAdapter(opts)
+  const retrieval = retrieveWithAdapter(query, opts)
+  return gateAnswer(synthesize(query, retrieval, { ...opts, adapter }))
 }

@@ -1,6 +1,6 @@
 # Status
 
-**Phase:** 1 — mechanical single-source RAG
+**Phase:** 2 — CI-safe Haystack / LlamaIndex adapters
 **Date:** 2026-09-01
 **Family handoff:** [portfolio-kit docs/STATUS.md](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/STATUS.md)
 
@@ -9,17 +9,17 @@
 - CONTRACT/SPEC + synthetic public corpus
 - Keyword retrieve + extractive cited answer (`src/answer.js`)
 - Evaluator gate before delivery (`act` / `delivered`)
-- Fail closed on GitHub writes, live LLM, Haystack / LlamaIndex, federated RAG
-- Eval `GER-001`–`GER-016`
+- CI-safe Haystack / LlamaIndex adapters (`src/adapters.js`)
+- Fail closed on GitHub writes, live LLM, live Haystack / LlamaIndex packages, federated RAG
+- Eval `GER-001`–`GER-020`
 
 ## Last measured
 
-2026-09-01: `npm test` 7/7; D3 catch 1.0 (n=12); agreement 1.0; known-bad never `act`. Live LLM / Haystack / LlamaIndex / federated refused.
+2026-09-01: `npm test` 8/8; D3 catch 1.0 (n=14); agreement 1.0; known-bad never `act`. Live LLM / live Haystack / LlamaIndex packages / federated refused. CI-safe adapters pass GER-017–018.
 
 ## Not done
 
-- Haystack / LlamaIndex adapter (Phase 2)
-- Multi-source router + contradiction resolution
+- Multi-source router + contradiction resolution (Phase 3)
 - dsh tool / plugin expose
 
-**Next:** Phase 2 Haystack / LlamaIndex adapter still gated before delivery, or meridian-jspace Phase 2 if redirected. Do not start red/blue.
+**Next:** Phase 3 multi-source router, or meridian-jspace Phase 2 if redirected. Do not start red/blue.

@@ -1,6 +1,6 @@
 /**
  * Keyword retriever over one public corpus.
- * Phase 1 does not call Haystack, LlamaIndex, or embeddings APIs.
+ * Does not call live Haystack, LlamaIndex, or embeddings APIs.
  */
 
 import { DEFAULT_CORPUS, tokenize } from './corpus.js'

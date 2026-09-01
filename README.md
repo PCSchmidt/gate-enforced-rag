@@ -2,9 +2,9 @@
 
 A RAG pipeline whose user-facing answer cannot ship until a Meridian-style Evaluator gate passes.
 
-**Status:** Phase 1 — mechanical single-source RAG
+**Status:** Phase 2 — CI-safe Haystack / LlamaIndex adapters
 
-Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword retrieve + extractive citations over one public corpus. It does not load Haystack, LlamaIndex, or an LLM. Federated synthesis across public silos is Phase 3.
+Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword retrieve + extractive citations over one public corpus. Phase 2 adds pipeline-shaped Haystack / LlamaIndex adapters over the same retriever. It does not pip-install those packages or call an LLM. Federated synthesis across public silos is Phase 3.
 
 ## Relation to Meridian
 
@@ -21,46 +21,49 @@ The Evaluator is a post-generation / pre-delivery component. Corrections memory 
 
 ```mermaid
 flowchart LR
-    Q[Query] --> R[Keyword retriever]
+    Q[Query] --> A[Adapter]
+    A --> R[Keyword retriever]
     R --> Syn[Extractive synthesis]
     Syn --> Gate[Evaluator gate]
     Gate -->|pass| Out[User answer + citations]
     Gate -->|fail| Mem[Issues / no delivery]
 ```
 
-Phase 1 uses a mechanical proxy for `R`/`Syn` (keyword overlap + cited snippets). Haystack / LlamaIndex adapters are Phase 2. Public silos (later): satellite / NOTAM fixtures, GSA-style manifests, your public repos, Wikipedia / arXiv.
+Adapters (`mechanical-keyword`, `haystack-adapter`, `llamaindex-adapter`) share retrieve + gate. Live Haystack / LlamaIndex packages are refused. Public silos (later): satellite / NOTAM fixtures, GSA-style manifests, your public repos, Wikipedia / arXiv.
 
 ## Develop
 
 ```sh
 npm test
 npm run eval
-npm run answer -- fixtures/query-stub.json
+npm run answer -- --haystack fixtures/query-stub.json
+npm run answer -- --llamaindex fixtures/query-stub.json
 ```
 
-Requires Node.js 20+. No dependencies, no network, no GPU. `--llm`, `--openai`, `--haystack`, `--llamaindex`, `--multi-source`, `--federated`, `--github-write`, `--comment`, and `--issue` are refused.
+Requires Node.js 20+. No dependencies, no network, no GPU. `--llm`, `--openai`, `--live-haystack`, `--pip-haystack`, `--install-haystack`, `--live-llamaindex`, `--pip-llamaindex`, `--install-llamaindex`, `--multi-source`, `--federated`, `--github-write`, `--comment`, and `--issue` are refused. `--haystack` and `--llamaindex` select CI-safe adapters.
 
 ## Planned phases
 
-1. Single-source RAG over one public corpus *(this increment; includes the Evaluator gate)*
-2. Haystack / LlamaIndex adapter, still gated before delivery
+1. Single-source RAG over one public corpus *(shipped; includes the Evaluator gate)*
+2. Haystack / LlamaIndex adapter, still gated before delivery *(this increment; CI-safe)*
 3. Multi-source router + contradiction resolution
 4. Observability + federated eval set
 5. Optional expose as a dsh tool / plugin
-```
-CONTRACT.md
-SPEC.md
-src/answer.js
-src/retrieve.js
-src/corpus.js
-eval/cases.json
-fixtures/corpus/
-tests/
-```
+
 ## Public / unclassified data only
 
 No JPO / F-35 / internal document dumps. Cite sources in `fixtures/SOURCES.md` when added.
 
 ## Current tree
 
-Phase 0 is documentation only.
+```
+CONTRACT.md
+SPEC.md
+src/answer.js
+src/adapters.js
+src/retrieve.js
+src/corpus.js
+eval/cases.json
+fixtures/corpus/
+tests/
+```

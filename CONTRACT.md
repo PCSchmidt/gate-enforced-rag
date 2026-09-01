@@ -9,14 +9,15 @@
 
 ## Scope
 
-Turn a **query** against one public corpus into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). It does not load Haystack, LlamaIndex, or an LLM, and it does not post GitHub.
+Turn a **query** against one public corpus into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). Phase 2 adds **CI-safe Haystack / LlamaIndex adapters** over the same retriever. It does not pip-install those packages, call an LLM, or post GitHub.
 
 ### In scope
 
 - Answer schema `gate-enforced-rag.answer.v1`
 - Single synthetic corpus paraphrased from portfolio-kit
 - Keyword retriever + extractive synthesis with citations
-- Fail closed on GitHub writes, webhooks, live LLM, Haystack / LlamaIndex, and federated multi-source
+- Haystack / LlamaIndex pipeline-shaped adapters (`haystack-adapter`, `llamaindex-adapter`)
+- Fail closed on GitHub writes, webhooks, live LLM, live Haystack / LlamaIndex packages, and federated multi-source
 - Portfolio-kit D3 on known-bad answers
 - Public / unclassified fixtures only
 
@@ -24,7 +25,7 @@ Turn a **query** against one public corpus into a user-facing answer that **cann
 
 - JPO / F-35 / employer program data except as known-bad eval strings
 - Replacing Claude Code / Cursor / Copilot
-- Haystack / LlamaIndex adapters *(Phase 2)*
+- pip/npm install of Haystack or LlamaIndex
 - Multi-source router + contradiction resolution *(Phase 3)*
 - dsh tool / plugin expose *(Phase 5)*
 - redteam-blue-gate
@@ -39,7 +40,7 @@ Turn a **query** against one public corpus into a user-facing answer that **cann
 |-------|------------|
 | Runtime | Node 20+ stdlib |
 | Reliability | Mechanical gate + portfolio-kit verdict shape |
-| Models | None in Phase 1 (`mechanical-rag`) |
+| Models | None (`mechanical-rag`; adapters stay extractive) |
 | Deploy | Local `npm test` / `npm run eval` |
 
 ---
@@ -51,11 +52,12 @@ Turn a **query** against one public corpus into a user-facing answer that **cann
 3. Known-bad answers never `act` / `delivered`
 4. Eval table uses portfolio-kit D3
 5. Data policy grep is clean
-6. `--llm` / `--haystack` / `--llamaindex` / `--multi-source` / `--github-write` fail closed
+6. `--llm` / `--live-haystack` / `--pip-haystack` / `--multi-source` / `--github-write` fail closed
+7. `--haystack` / `--llamaindex` select CI-safe adapters that still gate before delivery
 
 ---
 
 ## Known constraints
-
+2
 - Phase 1 does not require GPU, embeddings APIs, or Python RAG frameworks.
 - Windows host via Git Bash.

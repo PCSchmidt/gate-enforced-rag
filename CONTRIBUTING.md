@@ -8,4 +8,4 @@ npm run eval
 npm run answer
 ```
 
-Tests and eval must stay green. Do not require network, GPU, Haystack, LlamaIndex, or an LLM in CI. Do not post GitHub comments from this repo.
+Tests and eval must stay green. Do not require network, GPU, pip Haystack / LlamaIndex, or an LLM in CI. `--haystack` and `--llamaindex` are CI-safe adapters. Do not post GitHub comments from this repo.

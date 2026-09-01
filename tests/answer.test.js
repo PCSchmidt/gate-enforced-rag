@@ -23,6 +23,23 @@ test('cited gate-contract query ships', () => {
   assert.match(report.text, /\[gate-contract\]/)
 })
 
+test('CI-safe haystack and llamaindex adapters still gate before delivery', () => {
+  const haystack = answer('What is a gate pass?', { haystack: true, now: '2026-09-01T12:00:00.000Z' })
+  assert.equal(haystack.backend, 'haystack-adapter')
+  assert.equal(haystack.family, 'haystack')
+  assert.equal(haystack.verdict, 'pass')
+  assert.equal(haystack.act, true)
+  assert.equal(haystack.live_haystack, false)
+  assert.deepEqual(haystack.pipeline.slice(-1), ['evaluator_gate'])
+  assert.ok(haystack.citations.some((row) => row.id === 'gate-contract'))
+
+  const llama = answer('Must user-facing answers cite retrieved snippets?', { llamaindex: true })
+  assert.equal(llama.backend, 'llamaindex-adapter')
+  assert.equal(llama.family, 'llamaindex')
+  assert.equal(llama.verdict, 'pass')
+  assert.equal(llama.live_llamaindex, false)
+})
+
 test('F-35 query never acts', () => {
   const report = answer('F-35 overlay')
   assert.equal(report.verdict, 'fail')
@@ -31,14 +48,16 @@ test('F-35 query never acts', () => {
   assert.ok(report.issues.some((row) => row.code === 'extra_entity'))
 })
 
-test('GitHub writes, live LLM, Haystack, and federated fail closed', () => {
+test('GitHub writes, live LLM, live packages, and federated fail closed', () => {
   assert.throws(() => answer('What is a gate pass?', { githubWrite: true }), /local retrieval only/)
-  assert.throws(() => answer('What is a gate pass?', { llm: true }), /Phase 2/)
-  assert.throws(() => answer('What is a gate pass?', { haystack: true }), /Phase 2/)
+  assert.throws(() => answer('What is a gate pass?', { llm: true }), /Live LLM is out of scope/)
+  assert.throws(() => answer('What is a gate pass?', { liveHaystack: true }), /CI-safe adapter/)
+  assert.throws(() => answer('What is a gate pass?', { pipLlamaindex: true }), /CI-safe adapter/)
+  assert.throws(() => answer('What is a gate pass?', { haystack: true, llamaindex: true }), /Choose one adapter/)
   assert.throws(() => answer('What is a gate pass?', { multiSource: true }), /single public corpus/)
   assert.throws(() => refuseGitHubWrite('rag'), /local retrieval only/)
-  assert.throws(() => refuseLiveLlm(), /Phase 2/)
-  assert.throws(() => refuseFramework('llamaindex'), /Phase 2/)
+  assert.throws(() => refuseLiveLlm(), /Live LLM is out of scope/)
+  assert.throws(() => refuseFramework('llamaindex'), /CI-safe adapter/)
   assert.throws(() => refuseMultiSource(), /single public corpus/)
 
   const gh = gateAnswer({

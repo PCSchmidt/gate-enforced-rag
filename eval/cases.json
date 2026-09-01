@@ -226,6 +226,62 @@
         "github_write": false,
         "live_llm": false
       }
+    },
+    {
+      "case_id": "GER-017",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "haystack": true,
+      "query": "What is a gate pass?"
+    },
+    {
+      "case_id": "GER-018",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "llamaindex": true,
+      "query": "Must user-facing answers cite retrieved snippets?"
+    },
+    {
+      "case_id": "GER-019",
+      "kind": "bad",
+      "failure_mode": "live_haystack",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "haystack-adapter",
+        "haystack": true,
+        "live_haystack": true,
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
+    },
+    {
+      "case_id": "GER-020",
+      "kind": "bad",
+      "failure_mode": "live_llamaindex",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "llamaindex-adapter",
+        "llamaindex": true,
+        "live_llamaindex": true,
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false
+      }
     }
   ]
 }

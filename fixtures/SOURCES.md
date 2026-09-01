@@ -1,6 +1,6 @@
 # Fixture sources
 
-Phase 1 uses a **synthetic public corpus** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no Haystack, no LLM, no program-of-record trees.
+Phase 1–2 use a **synthetic public corpus** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no pip Haystack / LlamaIndex, no LLM, no program-of-record trees.
 
 | File | Source | Retrieved |
 |------|--------|-----------|

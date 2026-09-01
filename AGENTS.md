@@ -15,7 +15,7 @@
 ## Do not
 
 - Start redteam-blue-gate.
-- Load Haystack, LlamaIndex, or a live LLM in Phase 1.
+- pip-install Haystack / LlamaIndex or call a live LLM. `--haystack` / `--llamaindex` are CI-safe adapters only.
 - Open GitHub issues or post webhooks.
 - Put JPO / F-35 content in fixtures except as known-bad eval strings.
 - Treat a generator self-score as a pass.
