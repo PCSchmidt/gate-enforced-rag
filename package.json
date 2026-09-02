@@ -2,7 +2,7 @@
   "name": "gate-enforced-rag",
   "version": "0.1.0",
   "private": true,
-  "description": "Mechanical single-source RAG whose user-facing answer cannot ship until an Evaluator gate passes. Haystack / LlamaIndex adapters are CI-safe; live packages refused.",
+  "description": "Mechanical RAG whose user-facing answer cannot ship until an Evaluator gate passes. Local multi-silo router; Haystack / LlamaIndex adapters are CI-safe; live packages and federated remotes refused.",
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",

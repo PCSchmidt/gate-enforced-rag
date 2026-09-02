@@ -3,10 +3,10 @@ import { test } from 'node:test'
 import {
   answer,
   gateAnswer,
+  refuseFederated,
   refuseFramework,
   refuseGitHubWrite,
   refuseLiveLlm,
-  refuseMultiSource,
 } from '../src/answer.js'
 
 test('cited gate-contract query ships', () => {
@@ -48,17 +48,40 @@ test('F-35 query never acts', () => {
   assert.ok(report.issues.some((row) => row.code === 'extra_entity'))
 })
 
+test('local multi-source router ships cited answers and fail-closes contradictions', () => {
+  const report = answer('What public NOTAM stand-ins are allowed unclassified?', {
+    multiSource: true,
+    now: '2026-09-01T12:00:00.000Z',
+  })
+  assert.equal(report.verdict, 'pass')
+  assert.equal(report.act, true)
+  assert.equal(report.multi_source, true)
+  assert.equal(report.federated, false)
+  assert.ok(report.silos.includes('contracts'))
+  assert.ok(report.silos.includes('ops'))
+  assert.ok(report.citations.some((row) => row.id === 'notam-standin'))
+  assert.equal(report.contradictions.length, 0)
+
+  const clash = answer('Is a generator scoring its own work an independent evaluator pass?', {
+    multiSource: true,
+  })
+  assert.equal(clash.verdict, 'fail')
+  assert.equal(clash.act, false)
+  assert.ok(clash.issues.some((row) => row.code === 'contradiction'))
+  assert.ok(clash.contradictions.length >= 1)
+})
+
 test('GitHub writes, live LLM, live packages, and federated fail closed', () => {
   assert.throws(() => answer('What is a gate pass?', { githubWrite: true }), /local retrieval only/)
   assert.throws(() => answer('What is a gate pass?', { llm: true }), /Live LLM is out of scope/)
   assert.throws(() => answer('What is a gate pass?', { liveHaystack: true }), /CI-safe adapter/)
   assert.throws(() => answer('What is a gate pass?', { pipLlamaindex: true }), /CI-safe adapter/)
   assert.throws(() => answer('What is a gate pass?', { haystack: true, llamaindex: true }), /Choose one adapter/)
-  assert.throws(() => answer('What is a gate pass?', { multiSource: true }), /single public corpus/)
+  assert.throws(() => answer('What is a gate pass?', { federated: true }), /local multi-silo only/)
   assert.throws(() => refuseGitHubWrite('rag'), /local retrieval only/)
   assert.throws(() => refuseLiveLlm(), /Live LLM is out of scope/)
   assert.throws(() => refuseFramework('llamaindex'), /CI-safe adapter/)
-  assert.throws(() => refuseMultiSource(), /single public corpus/)
+  assert.throws(() => refuseFederated(), /local multi-silo only/)
 
   const gh = gateAnswer({
     schema: 'gate-enforced-rag.answer.v1',

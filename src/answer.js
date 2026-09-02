@@ -1,13 +1,15 @@
 /**
- * Mechanical single-source RAG + Phase 2 CI-safe adapters.
+ * Mechanical RAG + CI-safe adapters + Phase 3 local multi-silo router.
  * Extractive synthesis + Evaluator gate before delivery.
- * Does not pip-install Haystack / LlamaIndex or call an LLM.
+ * Does not pip-install Haystack / LlamaIndex, call an LLM, or federate remotes.
  */
 
 import { resolveAdapter, retrieveWithAdapter } from './adapters.js'
 import { FORBIDDEN, STUB } from './corpus.js'
+import { refuseFederated } from './router.js'
 
 export { refuseLiveFramework } from './adapters.js'
+export { refuseFederated } from './router.js'
 
 export const ANSWER_SCHEMA = 'gate-enforced-rag.answer.v1'
 
@@ -30,9 +32,7 @@ export function refuseFramework(name = 'haystack') {
 }
 
 export function refuseMultiSource() {
-  const error = new Error('Multi-source / federated RAG refused: Phase 1 is a single public corpus')
-  error.code = 'multi_source_refused'
-  throw error
+  refuseFederated('multi-source')
 }
 
 export function synthesize(query, retrieval, opts = {}) {
@@ -42,6 +42,7 @@ export function synthesize(query, retrieval, opts = {}) {
     id: hit.id,
     path: hit.path,
     title: hit.title,
+    silo: hit.silo,
     quote: String(hit.text || '').slice(0, 180),
     score: hit.score,
   }))
@@ -68,8 +69,10 @@ export function synthesize(query, retrieval, opts = {}) {
     llamaindex: adapter.family === 'llamaindex',
     github_write: false,
     webhook_posted: false,
-    multi_source: false,
+    multi_source: retrieval?.multi_source === true,
     federated: false,
+    silos: retrieval?.silos || ['contracts'],
+    contradictions: retrieval?.contradictions || [],
   }
 }
 
@@ -99,8 +102,11 @@ export function gateAnswer(report) {
   if (report?.llamaindex && report?.backend !== 'llamaindex-adapter') {
     issues.push({ severity: 'high', code: 'framework', message: 'llamaindex flag requires llamaindex-adapter backend' })
   }
-  if (report?.multi_source || report?.federated) {
-    issues.push({ severity: 'high', code: 'multi_source', message: 'Phase 1 is single-source only' })
+  if (report?.federated || report?.live_silos || report?.wikipedia || report?.arxiv) {
+    issues.push({ severity: 'high', code: 'federated', message: 'Live Wikipedia / arXiv federation is refused' })
+  }
+  if ((report?.contradictions || []).length) {
+    issues.push({ severity: 'high', code: 'contradiction', message: 'Unresolved cross-silo contradiction' })
   }
   if (report?.generator_self_score != null || report?.self_score != null) {
     issues.push({ severity: 'high', code: 'self_grade', message: 'Generator self-score is not a gate pass' })
@@ -149,7 +155,9 @@ export function answer(query, opts = {}) {
   if (opts.llm === true || opts.openai === true || opts.liveLlm === true) {
     refuseLiveLlm()
   }
-  if (opts.multiSource === true || opts.federated === true) refuseMultiSource()
+  if (opts.federated === true || opts.liveSilos === true || opts.wikipedia === true || opts.arxiv === true) {
+    refuseFederated()
+  }
   const adapter = resolveAdapter(opts)
   const retrieval = retrieveWithAdapter(query, opts)
   return gateAnswer(synthesize(query, retrieval, { ...opts, adapter }))

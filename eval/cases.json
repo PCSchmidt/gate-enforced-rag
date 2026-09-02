@@ -282,6 +282,54 @@
         "github_write": false,
         "live_llm": false
       }
+    },
+    {
+      "case_id": "GER-021",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "multi_source": true,
+      "query": "What public NOTAM stand-ins are allowed unclassified?"
+    },
+    {
+      "case_id": "GER-022",
+      "kind": "bad",
+      "failure_mode": "contradiction",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "multi_source": true,
+      "query": "Is a generator scoring its own work an independent evaluator pass?"
+    },
+    {
+      "case_id": "GER-023",
+      "kind": "bad",
+      "failure_mode": "federated",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "multi_source": true,
+        "federated": true,
+        "wikipedia": true
+      }
+    },
+    {
+      "case_id": "GER-024",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "haystack": true,
+      "multi_source": true,
+      "query": "What public NOTAM stand-ins are allowed unclassified?"
     }
   ]
 }

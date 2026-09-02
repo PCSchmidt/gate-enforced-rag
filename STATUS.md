@@ -1,6 +1,6 @@
 # Status
 
-**Phase:** 2 — CI-safe Haystack / LlamaIndex adapters
+**Phase:** 3 — local multi-silo router + contradiction fail-closed
 **Date:** 2026-09-01
 **Family handoff:** [portfolio-kit docs/STATUS.md](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/STATUS.md)
 
@@ -10,16 +10,17 @@
 - Keyword retrieve + extractive cited answer (`src/answer.js`)
 - Evaluator gate before delivery (`act` / `delivered`)
 - CI-safe Haystack / LlamaIndex adapters (`src/adapters.js`)
-- Fail closed on GitHub writes, live LLM, live Haystack / LlamaIndex packages, federated RAG
-- Eval `GER-001`–`GER-020`
+- Local multi-silo router (`src/router.js`) over `contracts` + `ops`
+- Fail closed on GitHub writes, live LLM, live Haystack / LlamaIndex packages, federated remotes, unresolved contradictions
+- Eval `GER-001`–`GER-024`
 
 ## Last measured
 
-2026-09-01: `npm test` 8/8; D3 catch 1.0 (n=14); agreement 1.0; known-bad never `act`. Live LLM / live Haystack / LlamaIndex packages / federated refused. CI-safe adapters pass GER-017–018.
+2026-09-02: `npm test` 9/9; D3 catch 1.0 (n=16); agreement 1.0; known-bad never `act`; golden set 24. Local `--multi-source` ships GER-021/024; contradiction GER-022 and federated GER-015/023 fail closed.
 
 ## Not done
 
-- Multi-source router + contradiction resolution (Phase 3)
-- dsh tool / plugin expose
+- Observability + federated eval set (Phase 4)
+- dsh tool / plugin expose (Phase 5)
 
-**Next:** Phase 3 multi-source router, or meridian-jspace Phase 2 if redirected. Do not start red/blue.
+**Next:** meridian-jspace Phase 2 (optional live Qwen) or RAG Phase 4. Do not start red/blue. Do not download Qwen unless asked.

@@ -12,7 +12,7 @@ Features as `##` headings, in priority order.
 - [x] Extractive synthesis cites retrieved document ids
 - [x] `act` / `delivered` true only after Evaluator `pass`
 - [x] `--github-write` / `--comment` / `--issue` fail closed
-- [x] `--llm` / `--openai` / `--multi-source` / `--federated` fail closed
+- [x] `--llm` / `--openai` / `--federated` fail closed
 - [x] Eval cases `GER-001`–`GER-016` cover good answers and known-bad reports
 
 **Out of scope for this feature:** live LLM, federated silos.
@@ -28,4 +28,17 @@ Features as `##` headings, in priority order.
 - [x] No `haystack` / `llama-index` package is imported
 - [x] Eval cases `GER-017`–`GER-020` cover adapter pass and live-package fail
 
-**Out of scope for this feature:** pip install, embeddings APIs, multi-source router.
+**Out of scope for this feature:** pip install, embeddings APIs, live Wikipedia / arXiv federation.
+
+## Feature: Local multi-silo router
+
+**Gate:** evaluated
+**Acceptance:**
+
+- [x] `--multi-source` retrieves from local `contracts` + `ops` silos and cites hits
+- [x] Unresolved claim contradictions fail closed (`act` false)
+- [x] `--federated` / `--wikipedia` / `--arxiv` fail closed
+- [x] Single-source GER-001–004 still pass without `--multi-source`
+- [x] Eval cases `GER-021`–`GER-024` cover router pass, contradiction fail, federated fail
+
+**Out of scope for this feature:** live remote silos, observability dashboards (Phase 4).

@@ -16,6 +16,7 @@
 
 - Start redteam-blue-gate.
 - pip-install Haystack / LlamaIndex or call a live LLM. `--haystack` / `--llamaindex` are CI-safe adapters only.
+- Scrape Wikipedia / arXiv or set `--federated`. `--multi-source` is local silos only.
 - Open GitHub issues or post webhooks.
 - Put JPO / F-35 content in fixtures except as known-bad eval strings.
 - Treat a generator self-score as a pass.

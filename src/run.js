@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { answer, refuseFramework, refuseGitHubWrite, refuseLiveLlm, refuseMultiSource } from './answer.js'
+import { answer, refuseFramework, refuseGitHubWrite, refuseLiveLlm, refuseFederated } from './answer.js'
 
 function parseArgs(argv) {
   const args = argv.slice(2)
@@ -17,22 +17,26 @@ function parseArgs(argv) {
   if (args.includes('--live-llamaindex') || args.includes('--pip-llamaindex') || args.includes('--install-llamaindex')) {
     refuseFramework('llamaindex')
   }
-  if (args.includes('--multi-source') || args.includes('--federated')) refuseMultiSource()
+  if (args.includes('--federated') || args.includes('--wikipedia') || args.includes('--arxiv')) {
+    refuseFederated('cli')
+  }
   const rest = args.filter((arg) => ![
     '--github-write', '--comment', '--issue', '--llm', '--openai',
     '--haystack', '--llamaindex', '--multi-source', '--federated',
     '--live-haystack', '--pip-haystack', '--install-haystack',
     '--live-llamaindex', '--pip-llamaindex', '--install-llamaindex',
+    '--wikipedia', '--arxiv',
   ].includes(arg))
   return {
     input: rest.join(' '),
     haystack: args.includes('--haystack'),
     llamaindex: args.includes('--llamaindex'),
+    multiSource: args.includes('--multi-source'),
   }
 }
 
 function main() {
-  const { input, haystack, llamaindex } = parseArgs(process.argv)
+  const { input, haystack, llamaindex, multiSource } = parseArgs(process.argv)
   let query = 'What is a gate pass?'
   if (input.endsWith('.json')) {
     const payload = JSON.parse(readFileSync(input, 'utf8'))
@@ -40,7 +44,7 @@ function main() {
   } else if (input.trim()) {
     query = input.trim()
   }
-  process.stdout.write(`${JSON.stringify(answer(query, { haystack, llamaindex }), null, 2)}\n`)
+  process.stdout.write(`${JSON.stringify(answer(query, { haystack, llamaindex, multiSource }), null, 2)}\n`)
 }
 
 const invoked = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]

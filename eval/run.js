@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Held-out gate eval for gate-enforced-rag Phase 2.
+ * Held-out gate eval for gate-enforced-rag Phase 3.
  *   npm run eval
  */
 
@@ -34,6 +34,7 @@ export function runEval(catalog, opts = {}) {
         now: '2026-09-01T12:00:00.000Z',
         haystack: testCase.haystack === true,
         llamaindex: testCase.llamaindex === true,
+        multiSource: testCase.multi_source === true,
       })
     const agreed = verdictMatches(testCase.expect_verdict, gated.verdict)
       && gated.act === testCase.expect_act
@@ -76,7 +77,7 @@ export function runEval(catalog, opts = {}) {
     },
     target_gate_catch: catalog.target_gate_catch ?? 0.85,
     cases: rows,
-    next: 'Phase 3: multi-source router + contradiction resolution. Do not start red/blue.',
+    next: 'Phase 4: observability. Do not start red/blue. Do not download Qwen unless asked for jspace Phase 2.',
   }
   report.ok = (report.metrics.D3_gate_catch_rate ?? 0) >= report.target_gate_catch
     && report.metrics.verdict_agreement === 1

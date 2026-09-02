@@ -25,6 +25,8 @@ export function retrieve(query, opts = {}) {
       path: doc.path,
       title: doc.title,
       text: doc.text,
+      silo: doc.silo,
+      claims: doc.claims || [],
       score: scoreDoc(queryTokens, doc),
     }))
     .filter((row) => row.score > 0)

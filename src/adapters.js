@@ -5,6 +5,7 @@
  */
 
 import { retrieve } from './retrieve.js'
+import { routeRetrieve } from './router.js'
 
 export const ADAPTERS = {
   mechanical: {
@@ -49,7 +50,9 @@ export function resolveAdapter(opts = {}) {
 
 export function retrieveWithAdapter(query, opts = {}) {
   const adapter = resolveAdapter(opts)
-  const retrieval = retrieve(query, opts)
+  const retrieval = opts.multiSource === true
+    ? routeRetrieve(query, opts)
+    : retrieve(query, opts)
   return {
     ...retrieval,
     adapter: adapter.id,

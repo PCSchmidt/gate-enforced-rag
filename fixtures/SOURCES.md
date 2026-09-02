@@ -1,6 +1,6 @@
 # Fixture sources
 
-Phase 1–2 use a **synthetic public corpus** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no pip Haystack / LlamaIndex, no LLM, no program-of-record trees.
+Phase 1–3 use **synthetic public corpora** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no pip Haystack / LlamaIndex, no LLM, no program-of-record trees.
 
 | File | Source | Retrieved |
 |------|--------|-----------|
@@ -9,5 +9,7 @@ Phase 1–2 use a **synthetic public corpus** paraphrased from portfolio-kit con
 | [corpus/evaluator.md](corpus/evaluator.md) | GATE_CONTRACT Evaluator section (paraphrase) | 2026-09-01 |
 | [corpus/citations.md](corpus/citations.md) | Synthetic citation rule for this repo | 2026-09-01 |
 | [query-stub.json](query-stub.json) | Synthetic CLI payload | 2026-09-01 |
+| [corpus/ops/notam-standin.md](corpus/ops/notam-standin.md) | DATA_POLICY allowed-stand-in paraphrase | 2026-09-01 |
+| [corpus/ops/self-grade-myth.md](corpus/ops/self-grade-myth.md) | Synthetic contradiction fixture (known-bad claim) | 2026-09-01 |
 
 Known-bad strings (`F-35`, `TODO`) exist only as gate-catch tokens in [eval/cases.json](../eval/cases.json).
