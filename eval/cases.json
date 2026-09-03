@@ -330,6 +330,69 @@
       "haystack": true,
       "multi_source": true,
       "query": "What public NOTAM stand-ins are allowed unclassified?"
+    },
+    {
+      "case_id": "GER-025",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "observe": true,
+      "query": "What is a gate pass?"
+    },
+    {
+      "case_id": "GER-026",
+      "kind": "bad",
+      "failure_mode": "live_telemetry",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "observe": true,
+        "live_otel": true
+      }
+    },
+    {
+      "case_id": "GER-027",
+      "kind": "bad",
+      "failure_mode": "incomplete_trace",
+      "expect_verdict": "fail",
+      "expect_act": false,
+      "answer": {
+        "schema": "gate-enforced-rag.answer.v1",
+        "backend": "mechanical-keyword",
+        "retrieved_n": 1,
+        "max_score": 1,
+        "text": "A gate is a checkpoint. [gate-contract]",
+        "citations": [{ "id": "gate-contract", "quote": "A gate is a checkpoint." }],
+        "github_write": false,
+        "live_llm": false,
+        "observe": true,
+        "live_otel": false,
+        "trace": {
+          "schema": "gate-enforced-rag.trace.v1",
+          "exporter": "local-json",
+          "live_otel": false,
+          "spans": [{ "name": "retrieve", "status": "ok" }]
+        }
+      }
+    },
+    {
+      "case_id": "GER-028",
+      "kind": "good",
+      "failure_mode": null,
+      "expect_verdict": "pass",
+      "expect_act": true,
+      "observe": true,
+      "multi_source": true,
+      "query": "What public NOTAM stand-ins are allowed unclassified?"
     }
   ]
 }

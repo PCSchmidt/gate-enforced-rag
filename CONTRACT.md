@@ -9,7 +9,7 @@
 
 ## Scope
 
-Turn a **query** against public fixture silos into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). Phase 2 adds **CI-safe Haystack / LlamaIndex adapters**. Phase 3 adds a **local multi-silo router** with fail-closed contradiction handling. It does not pip-install RAG frameworks, call an LLM, scrape Wikipedia / arXiv, or post GitHub.
+Turn a **query** against public fixture silos into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). Phase 2 adds **CI-safe Haystack / LlamaIndex adapters**. Phase 3 adds a **local multi-silo router** with fail-closed contradiction handling. Phase 4 adds a **local JSON trace** on `--observe`. It does not pip-install RAG frameworks, call an LLM, scrape Wikipedia / arXiv, export OTEL, or post GitHub.
 
 ### In scope
 
@@ -18,7 +18,8 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 - Keyword retriever + extractive synthesis with citations
 - Haystack / LlamaIndex pipeline-shaped adapters (`haystack-adapter`, `llamaindex-adapter`)
 - Local multi-silo router (`--multi-source`) with contradiction fail-closed
-- Fail closed on GitHub writes, webhooks, live LLM, live Haystack / LlamaIndex packages, and federated remotes
+- Local JSON traces (`gate-enforced-rag.trace.v1`) on `--observe`
+- Fail closed on GitHub writes, webhooks, live LLM, live Haystack / LlamaIndex packages, federated remotes, and live OTEL
 - Portfolio-kit D3 on known-bad answers
 - Public / unclassified fixtures only
 
@@ -27,8 +28,7 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 - JPO / F-35 / employer program data except as known-bad eval strings
 - Replacing Claude Code / Cursor / Copilot
 - Live Wikipedia / arXiv federation
-- Observability + federated eval set *(Phase 4
-- Multi-source router + contradiction resolution *(Phase 3)*
+- Live OTEL / Prometheus / Jaeger export
 - dsh tool / plugin expose *(Phase 5)*
 - redteam-blue-gate
 - HardPowerIntelligence
@@ -53,14 +53,15 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 2. `npm test` and `npm run eval` exit 0
 3. Known-bad answers never `act` / `delivered`
 4. Eval table uses portfolio-kit D3
-5. Data policy grep is cleanfederated` / `--github-write` fail closed
+5. Data policy grep is clean
+6. `--llm` / `--live-haystack` / `--pip-haystack` / `--federated` / `--otel` / `--github-write` fail closed
 7. `--haystack` / `--llamaindex` select CI-safe adapters that still gate before delivery
-8. `--multi-source` is a local router; unresolved contradictions never `act`fail closed
-7. `--haystack` / `--llamaindex` select CI-safe adapters that still gate before delivery
+8. `--multi-source` is a local router; unresolved contradictions never `act`
+9. `--observe` attaches retrieve, synthesize, and evaluator_gate spans as local JSON
 
 ---
 
-- Phase 1–3 doraints
-2
-- Phase 1 does not require GPU, embeddings APIs, or Python RAG frameworks.
+## Known constraints
+
+- Phase 1–4 do not require GPU, embeddings APIs, or Python RAG frameworks.
 - Windows host via Git Bash.

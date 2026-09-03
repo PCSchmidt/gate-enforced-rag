@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Held-out gate eval for gate-enforced-rag Phase 3.
+ * Held-out gate eval for gate-enforced-rag Phase 4.
  *   npm run eval
  */
 
@@ -35,6 +35,7 @@ export function runEval(catalog, opts = {}) {
         haystack: testCase.haystack === true,
         llamaindex: testCase.llamaindex === true,
         multiSource: testCase.multi_source === true,
+        observe: testCase.observe === true,
       })
     const agreed = verdictMatches(testCase.expect_verdict, gated.verdict)
       && gated.act === testCase.expect_act
@@ -77,7 +78,7 @@ export function runEval(catalog, opts = {}) {
     },
     target_gate_catch: catalog.target_gate_catch ?? 0.85,
     cases: rows,
-    next: 'Phase 4: observability. Do not start red/blue. Do not download Qwen unless asked for jspace Phase 2.',
+    next: 'Phase 5: optional dsh plugin. Do not start red/blue. Do not download Qwen unless asked for jspace Phase 2.',
   }
   report.ok = (report.metrics.D3_gate_catch_rate ?? 0) >= report.target_gate_catch
     && report.metrics.verdict_agreement === 1

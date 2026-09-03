@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { answer, refuseFramework, refuseGitHubWrite, refuseLiveLlm, refuseFederated } from './answer.js'
+import { answer, refuseFramework, refuseGitHubWrite, refuseLiveLlm, refuseFederated, refuseLiveTelemetry } from './answer.js'
 
 function parseArgs(argv) {
   const args = argv.slice(2)
@@ -20,23 +20,28 @@ function parseArgs(argv) {
   if (args.includes('--federated') || args.includes('--wikipedia') || args.includes('--arxiv')) {
     refuseFederated('cli')
   }
+  if (args.includes('--otel') || args.includes('--prometheus') || args.includes('--jaeger') || args.includes('--datadog')) {
+    refuseLiveTelemetry('cli')
+  }
   const rest = args.filter((arg) => ![
     '--github-write', '--comment', '--issue', '--llm', '--openai',
     '--haystack', '--llamaindex', '--multi-source', '--federated',
     '--live-haystack', '--pip-haystack', '--install-haystack',
     '--live-llamaindex', '--pip-llamaindex', '--install-llamaindex',
-    '--wikipedia', '--arxiv',
+    '--wikipedia', '--arxiv', '--observe',
+    '--otel', '--prometheus', '--jaeger', '--datadog',
   ].includes(arg))
   return {
     input: rest.join(' '),
     haystack: args.includes('--haystack'),
     llamaindex: args.includes('--llamaindex'),
     multiSource: args.includes('--multi-source'),
+    observe: args.includes('--observe'),
   }
 }
 
 function main() {
-  const { input, haystack, llamaindex, multiSource } = parseArgs(process.argv)
+  const { input, haystack, llamaindex, multiSource, observe } = parseArgs(process.argv)
   let query = 'What is a gate pass?'
   if (input.endsWith('.json')) {
     const payload = JSON.parse(readFileSync(input, 'utf8'))
@@ -44,7 +49,7 @@ function main() {
   } else if (input.trim()) {
     query = input.trim()
   }
-  process.stdout.write(`${JSON.stringify(answer(query, { haystack, llamaindex, multiSource }), null, 2)}\n`)
+  process.stdout.write(`${JSON.stringify(answer(query, { haystack, llamaindex, multiSource, observe }), null, 2)}\n`)
 }
 
 const invoked = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]

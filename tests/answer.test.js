@@ -7,6 +7,7 @@ import {
   refuseFramework,
   refuseGitHubWrite,
   refuseLiveLlm,
+  refuseLiveTelemetry,
 } from '../src/answer.js'
 
 test('cited gate-contract query ships', () => {
@@ -107,6 +108,47 @@ test('GitHub writes, live LLM, live packages, and federated fail closed', () => 
     github_write: false,
   })
   assert.equal(live.verdict, 'fail')
+})
+
+test('local observe traces retrieve, synthesize, and gate; live OTEL fails closed', () => {
+  const report = answer('What is a gate pass?', { observe: true, now: '2026-09-01T12:00:00.000Z' })
+  assert.equal(report.verdict, 'pass')
+  assert.equal(report.act, true)
+  assert.equal(report.observe, true)
+  assert.equal(report.live_otel, false)
+  assert.equal(report.trace.schema, 'gate-enforced-rag.trace.v1')
+  assert.equal(report.trace.exporter, 'local-json')
+  assert.deepEqual(report.trace.spans.map((span) => span.name), ['retrieve', 'synthesize', 'evaluator_gate'])
+  assert.equal(report.trace.spans.at(-1).status, 'pass')
+
+  const quiet = answer('What is a gate pass?')
+  assert.equal(quiet.verdict, 'pass')
+  assert.equal(quiet.trace, undefined)
+
+  assert.throws(() => answer('What is a gate pass?', { liveOtel: true }), /local JSON trace/)
+  assert.throws(() => refuseLiveTelemetry(), /local JSON trace/)
+
+  const incomplete = gateAnswer({
+    schema: 'gate-enforced-rag.answer.v1',
+    backend: 'mechanical-keyword',
+    retrieved_n: 1,
+    max_score: 1,
+    text: 'A gate is a checkpoint. [gate-contract]',
+    citations: [{ id: 'gate-contract', quote: 'A gate is a checkpoint.' }],
+    github_write: false,
+    live_llm: false,
+    observe: true,
+    live_otel: false,
+    trace: {
+      schema: 'gate-enforced-rag.trace.v1',
+      exporter: 'local-json',
+      live_otel: false,
+      spans: [{ name: 'retrieve', status: 'ok' }],
+    },
+  })
+  assert.equal(incomplete.verdict, 'fail')
+  assert.equal(incomplete.act, false)
+  assert.ok(incomplete.issues.some((row) => row.code === 'incomplete_trace'))
 })
 
 test('empty retrieval and missing citations fail closed', () => {

@@ -41,4 +41,17 @@ Features as `##` headings, in priority order.
 - [x] Single-source GER-001–004 still pass without `--multi-source`
 - [x] Eval cases `GER-021`–`GER-024` cover router pass, contradiction fail, federated fail
 
-**Out of scope for this feature:** live remote silos, observability dashboards (Phase 4).
+**Out of scope for this feature:** live remote silos, live OTEL export.
+
+## Feature: Local JSON observability
+
+**Gate:** evaluated
+**Acceptance:**
+
+- [x] `--observe` attaches `gate-enforced-rag.trace.v1` with retrieve, synthesize, and evaluator_gate spans
+- [x] Default answers still pass without a trace
+- [x] `--otel` / `--prometheus` / `--jaeger` / `--datadog` fail closed
+- [x] Incomplete traces and `live_otel` never `act`
+- [x] Eval cases `GER-025`–`GER-028` cover observe pass, live telemetry fail, incomplete trace fail
+
+**Out of scope for this feature:** Jaeger dashboards, federated remote eval, dsh plugin (Phase 5).

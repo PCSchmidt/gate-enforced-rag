@@ -1,15 +1,17 @@
 /**
- * Mechanical RAG + CI-safe adapters + Phase 3 local multi-silo router.
+ * Mechanical RAG + CI-safe adapters + local multi-silo router + Phase 4 traces.
  * Extractive synthesis + Evaluator gate before delivery.
- * Does not pip-install Haystack / LlamaIndex, call an LLM, or federate remotes.
+ * Does not pip-install Haystack / LlamaIndex, call an LLM, federate remotes, or export OTEL.
  */
 
 import { resolveAdapter, retrieveWithAdapter } from './adapters.js'
 import { FORBIDDEN, STUB } from './corpus.js'
+import { buildTrace, completeTrace, refuseLiveTelemetry, traceIssues } from './observe.js'
 import { refuseFederated } from './router.js'
 
 export { refuseLiveFramework } from './adapters.js'
 export { refuseFederated } from './router.js'
+export { refuseLiveTelemetry } from './observe.js'
 
 export const ANSWER_SCHEMA = 'gate-enforced-rag.answer.v1'
 
@@ -73,6 +75,9 @@ export function synthesize(query, retrieval, opts = {}) {
     federated: false,
     silos: retrieval?.silos || ['contracts'],
     contradictions: retrieval?.contradictions || [],
+    observe: opts.observe === true,
+    live_otel: false,
+    trace: opts.observe === true ? buildTrace(retrieval, { citations: hits }) : undefined,
   }
 }
 
@@ -105,6 +110,7 @@ export function gateAnswer(report) {
   if (report?.federated || report?.live_silos || report?.wikipedia || report?.arxiv) {
     issues.push({ severity: 'high', code: 'federated', message: 'Live Wikipedia / arXiv federation is refused' })
   }
+  issues.push(...traceIssues(report))
   if ((report?.contradictions || []).length) {
     issues.push({ severity: 'high', code: 'contradiction', message: 'Unresolved cross-silo contradiction' })
   }
@@ -139,13 +145,17 @@ export function gateAnswer(report) {
   const warnIssue = issues.some((row) => row.severity === 'medium')
   const verdict = highIssue ? 'fail' : warnIssue ? 'warn' : 'pass'
   const act = verdict === 'pass'
-  return {
+  const gated = {
     ...report,
     issues,
     verdict,
     act,
     delivered: act,
   }
+  if (gated.observe === true || gated.trace) {
+    gated.trace = completeTrace(gated)
+  }
+  return gated
 }
 
 export function answer(query, opts = {}) {
@@ -157,6 +167,9 @@ export function answer(query, opts = {}) {
   }
   if (opts.federated === true || opts.liveSilos === true || opts.wikipedia === true || opts.arxiv === true) {
     refuseFederated()
+  }
+  if (opts.liveOtel === true || opts.prometheus === true || opts.jaeger === true || opts.datadog === true) {
+    refuseLiveTelemetry()
   }
   const adapter = resolveAdapter(opts)
   const retrieval = retrieveWithAdapter(query, opts)
