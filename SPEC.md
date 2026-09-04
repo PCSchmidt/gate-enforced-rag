@@ -1,4 +1,4 @@
-# SPEC.md
+# SPEC.md — gate-enforced-rag — portfolio-kit contract 0.1.0
 
 Features as `##` headings, in priority order.
 
@@ -54,9 +54,9 @@ Features as `##` headings, in priority order.
 - [x] Incomplete traces and `live_otel` never `act`
 - [x] Eval cases `GER-025`–`GER-028` cover observe pass, live telemetry fail, incomplete trace fail
 
-**Out of scope for this feature:** Jaeger dashboards, federated remote eval, dsh plugin (Phase 5).
+**Out of scope for this feature:** Jaeger dashboards and federated remote eval. The Phase 5 plugin expose is specified below.
 
-## Feature: dsh-shaped local plugin expose
+## Feature: dsh-shaped local plugin expose (Cordis conventions; dsh not required)
 
 **Gate:** evaluated
 **Acceptance:**

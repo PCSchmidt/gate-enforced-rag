@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Held-out gate eval for gate-enforced-rag Phase 4.
+ * Held-out gate eval for gate-enforced-rag Phase 5.
  *   npm run eval
  */
 
@@ -78,7 +78,7 @@ export function runEval(catalog, opts = {}) {
     },
     target_gate_catch: catalog.target_gate_catch ?? 0.85,
     cases: rows,
-    next: 'Phase 5: optional dsh plugin. Do not start red/blue. Do not download Qwen unless asked for jspace Phase 2.',
+    next: 'Phase 6 is undecided. Do not start red/blue. Do not download Qwen unless asked for jspace Phase 2.',
   }
   report.ok = (report.metrics.D3_gate_catch_rate ?? 0) >= report.target_gate_catch
     && report.metrics.verdict_agreement === 1

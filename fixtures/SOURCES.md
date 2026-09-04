@@ -1,6 +1,6 @@
 # Fixture sources
 
-Phase 1–3 use **synthetic public corpora** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no pip Haystack / LlamaIndex, no LLM, no program-of-record trees.
+Phases 1–5 use **synthetic public corpora** paraphrased from portfolio-kit contracts. No Wikipedia scrape, no pip Haystack / LlamaIndex, no LLM, no program-of-record trees.
 
 | File | Source | Retrieved |
 |------|--------|-----------|

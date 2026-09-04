@@ -2,14 +2,14 @@
 
 **Project:** gate-enforced-rag
 **Owner:** Chris Schmidt
-**Date:** 2026-09-01
+**Date:** 2026-09-04
 **Reliability layer:** Meridian contracts via [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit) 0.1.0
 
 ---
 
 ## Scope
 
-Turn a **query** against public fixture silos into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). Phase 2 adds **CI-safe Haystack / LlamaIndex adapters**. Phase 3 adds a **local multi-silo router** with fail-closed contradiction handling. Phase 4 adds a **local JSON trace** on `--observe`. It does not pip-install RAG frameworks, call an LLM, scrape Wikipedia / arXiv, export OTEL, or post GitHub.
+Turn a **query** against public fixture silos into a user-facing answer that **cannot ship** until an independent Evaluator gate passes. Phase 1 is **mechanical** extractive RAG (keyword retrieve + cited snippets). Phase 2 adds **CI-safe Haystack / LlamaIndex adapters**. Phase 3 adds a **local multi-silo router** with fail-closed contradiction handling. Phase 4 adds a **local JSON trace** on `--observe`. Phase 5 exposes the gated answer through a standalone Cordis-shaped `name` + `apply(ctx)` bundle. It does not pip-install RAG frameworks, call an LLM, scrape Wikipedia / arXiv, export OTEL, or post GitHub.
 
 ### In scope
 
@@ -19,6 +19,7 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 - Haystack / LlamaIndex pipeline-shaped adapters (`haystack-adapter`, `llamaindex-adapter`)
 - Local multi-silo router (`--multi-source`) with contradiction fail-closed
 - Local JSON traces (`gate-enforced-rag.trace.v1`) on `--observe`
+- Standalone dsh-shaped plugin service and tool (`index.js`, `src/plugin.js`)
 - Fail closed on GitHub writes, webhooks, live LLM, live Haystack / LlamaIndex packages, federated remotes, and live OTEL
 - Portfolio-kit D3 on known-bad answers
 - Public / unclassified fixtures only
@@ -29,7 +30,7 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 - Replacing Claude Code / Cursor / Copilot
 - Live Wikipedia / arXiv federation
 - Live OTEL / Prometheus / Jaeger export
-- dsh tool / plugin expose *(Phase 5)*
+- Live dsh installation or runtime integration
 - redteam-blue-gate
 - HardPowerIntelligence
 - meridian-jspace Phase 2 (Qwen / jacobian-lens)
@@ -58,10 +59,11 @@ Turn a **query** against public fixture silos into a user-facing answer that **c
 7. `--haystack` / `--llamaindex` select CI-safe adapters that still gate before delivery
 8. `--multi-source` is a local router; unresolved contradictions never `act`
 9. `--observe` attaches retrieve, synthesize, and evaluator_gate spans as local JSON
+10. `index.js` exposes the gated answer through a dependency-free `name` + `apply(ctx)` plugin shape
 
 ---
 
 ## Known constraints
 
-- Phase 1–4 do not require GPU, embeddings APIs, or Python RAG frameworks.
+- Phases 1–5 do not require GPU, embeddings APIs, Python RAG frameworks, or a live dsh runtime.
 - Windows host via Git Bash.

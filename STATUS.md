@@ -1,4 +1,4 @@
-# Status
+# Status — gate-enforced-rag Phase 5 — portfolio-kit contract 0.1.0
 
 **Phase:** 5 — dsh-shaped local plugin expose
 **Date:** 2026-09-04
@@ -19,7 +19,7 @@
 
 ## Last measured
 
-2026-09-04: plugin syntax checks passed; Phase 4 baseline was `npm test` 10/10; D3 catch 1.0 (n=18); agreement 1.0; known-bad never `act`; golden set 28. Phase 5 adds local `name` + `apply(ctx)` service coverage; final suite pending.
+2026-09-04: syntax checks passed; `npm test` 12/12; `npm run eval` ok — D3 catch 1.0 (n=18), verdict agreement 1.0, known-bad no-act 1.0, golden set 28. Phase 5 plugin contract tests cover registration, passing delivery, and rejected non-delivery. Live dsh runtime integration remains optional and unrequired.
 
 ## Not done
 

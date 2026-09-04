@@ -10,6 +10,12 @@ Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword
 
 The Evaluator is a post-generation / pre-delivery component. Corrections memory records rejected answers. Lifecycle hooks (`before_llm` / `before_tool` / `on_exit`) are the intended gate checkpoints.
 
+This project reuses the versioned contracts in [portfolio-kit](https://github.com/PCSchmidt/portfolio-kit), but it does not require the Meridian runtime, a `.meridian/` directory, or a live dsh process. The mechanical Evaluator gate is implemented locally in `src/answer.js`; the plugin follows Cordis conventions while remaining usable as a normal Node library.
+
+## Technical overview
+
+For the architecture, design decisions, request lifecycle, evaluation method, and recruiter-facing explanation, see [TECHNICAL_OVERVIEW.md](TECHNICAL_OVERVIEW.md).
+
 ## Shared contracts
 
 - [GATE_CONTRACT.md](https://github.com/PCSchmidt/portfolio-kit/blob/main/docs/GATE_CONTRACT.md)
@@ -69,6 +75,8 @@ src/router.js
 src/observe.js
 src/retrieve.js
 src/corpus.js
+src/plugin.js
+index.js
 eval/cases.json
 fixtures/corpus/
 tests/
