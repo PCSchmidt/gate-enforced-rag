@@ -2,9 +2,9 @@
 
 A RAG pipeline whose user-facing answer cannot ship until a Meridian-style Evaluator gate passes.
 
-**Status:** Phase 4 — local JSON observability
+**Status:** Phase 5 — dsh-shaped local plugin expose
 
-Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword retrieve + extractive citations over one public corpus. Phase 2 adds pipeline-shaped Haystack / LlamaIndex adapters. Phase 3 routes across local `contracts` + `ops` silos and fails closed on claim contradictions. Phase 4 attaches a local JSON trace on `--observe`. It does not pip-install RAG packages, call an LLM, scrape Wikipedia / arXiv, or export OTEL.
+Built on Meridian’s gate + independent Evaluator contracts. Phase 1 is keyword retrieve + extractive citations over one public corpus. Phase 2 adds pipeline-shaped Haystack / LlamaIndex adapters. Phase 3 routes across local `contracts` + `ops` silos and fails closed on claim contradictions. Phase 4 attaches a local JSON trace on `--observe`. Phase 5 exposes the same gated answer as a dsh-shaped `name` + `apply(ctx)` bundle. It does not pip-install RAG packages, call an LLM, scrape Wikipedia / arXiv, export OTEL, or require a dsh runtime.
 
 ## Relation to Meridian
 
@@ -42,6 +42,8 @@ npm run answer -- --multi-source fixtures/query-stub.json
 npm run answer -- --observe fixtures/query-stub.json
 ```
 
+As a local bundle, import `index.js` and call `apply(ctx)`. The provided `gateEnforcedRag.answer` service and `gate-enforced-rag.answer` tool return the complete gated report; failed reports never set `act` or `delivered`.
+
 Requires Node.js 20+. No dependencies, no network, no GPU. `--llm`, `--openai`, `--live-haystack`, `--pip-haystack`, `--install-haystack`, `--live-llamaindex`, `--pip-llamaindex`, `--install-llamaindex`, `--federated`, `--wikipedia`, `--arxiv`, `--otel`, `--prometheus`, `--jaeger`, `--datadog`, `--github-write`, `--comment`, and `--issue` are refused. `--haystack` and `--llamaindex` select CI-safe adapters. `--multi-source` is a local router. `--observe` is a local JSON trace.
 
 ## Planned phases
@@ -49,8 +51,8 @@ Requires Node.js 20+. No dependencies, no network, no GPU. `--llm`, `--openai`, 
 1. Single-source RAG over one public corpus *(shipped; includes the Evaluator gate)*
 2. Haystack / LlamaIndex adapter, still gated before delivery *(shipped; CI-safe)*
 3. Multi-source router + contradiction resolution *(shipped; local silos)*
-4. Observability *(this increment; local JSON traces)*
-5. Optional expose as a dsh tool / plugin
+4. Observability *(shipped; local JSON traces)*
+5. dsh-shaped local plugin expose *(this increment; no live dsh process required)*
 
 ## Public / unclassified data only
 

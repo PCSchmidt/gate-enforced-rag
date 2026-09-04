@@ -55,3 +55,15 @@ Features as `##` headings, in priority order.
 - [x] Eval cases `GER-025`–`GER-028` cover observe pass, live telemetry fail, incomplete trace fail
 
 **Out of scope for this feature:** Jaeger dashboards, federated remote eval, dsh plugin (Phase 5).
+
+## Feature: dsh-shaped local plugin expose
+
+**Gate:** evaluated
+**Acceptance:**
+
+- [x] `index.js` exports `name` and `apply(ctx)` without requiring dsh or network dependencies
+- [x] `apply(ctx)` provides `gateEnforcedRag` and optionally registers `gate-enforced-rag.answer`
+- [x] Plugin answers use the existing Evaluator gate and preserve `act` / `delivered` fail-closed behavior
+- [x] Plugin emits `rag.answer` when a context emitter is available
+
+**Out of scope for this feature:** live dsh installation, remote tools, GitHub writes, and live model calls.

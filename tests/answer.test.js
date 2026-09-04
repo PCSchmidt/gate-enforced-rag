@@ -9,6 +9,7 @@ import {
   refuseLiveLlm,
   refuseLiveTelemetry,
 } from '../src/answer.js'
+import { apply, name, tool } from '../src/plugin.js'
 
 test('cited gate-contract query ships', () => {
   const report = answer('What is a gate pass?', { now: '2026-09-01T12:00:00.000Z' })
@@ -169,4 +170,41 @@ test('empty retrieval and missing citations fail closed', () => {
   })
   assert.equal(uncited.verdict, 'fail')
   assert.ok(uncited.issues.some((row) => row.code === 'missing_citation'))
+})
+
+test('dsh-shaped plugin exposes the gated answer service', () => {
+  const emitted = []
+  const registered = []
+  const provided = []
+  const ctx = {
+    emit: (event, payload) => emitted.push({ event, payload }),
+    provide: (key, service) => provided.push({ key, service }),
+    registerTool: (definition, handler) => registered.push({ definition, handler }),
+    logger: { info() {} },
+  }
+  const service = apply(ctx)
+  assert.equal(name, 'gate-enforced-rag')
+  assert.equal(service.name, name)
+  assert.equal(provided[0].key, 'gateEnforcedRag')
+  assert.equal(registered[0].definition, tool)
+  const report = registered[0].handler('What is a gate pass?')
+  assert.equal(report.verdict, 'pass')
+  assert.equal(report.act, true)
+  assert.equal(emitted[0].event, 'rag.answer')
+})
+
+test('dsh-shaped plugin keeps rejected answers non-deliverable', () => {
+  const registered = []
+  const service = apply({
+    registerTool: (definition, handler) => registered.push({ definition, handler }),
+    logger: { info() {} },
+  })
+  const report = service.answer('How do I use GitHub to write an issue?')
+  const toolReport = registered[0].handler('How do I use GitHub to write an issue?')
+  assert.equal(report.verdict, 'fail')
+  assert.equal(report.act, false)
+  assert.equal(report.delivered, false)
+  assert.equal(toolReport.verdict, 'fail')
+  assert.equal(toolReport.act, false)
+  assert.equal(toolReport.delivered, false)
 })

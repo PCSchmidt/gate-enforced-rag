@@ -18,6 +18,7 @@
 - pip-install Haystack / LlamaIndex or call a live LLM. `--haystack` / `--llamaindex` are CI-safe adapters only.
 - Scrape Wikipedia / arXiv or set `--federated`. `--multi-source` is local silos only.
 - Export OTEL / Prometheus / Jaeger. `--observe` is a local JSON trace only.
+- Require a live dsh runtime for plugin tests. `index.js` is a dsh-shaped local bundle and must remain dependency-free.
 - Open GitHub issues or post webhooks.
 - Put JPO / F-35 content in fixtures except as known-bad eval strings.
 - Treat a generator self-score as a pass.
