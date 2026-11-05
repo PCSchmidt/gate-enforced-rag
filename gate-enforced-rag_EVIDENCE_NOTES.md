@@ -154,3 +154,23 @@ Previous text archived as gate-enforced-rag.v1draft.md (5,628 words); revised gu
 10. Results chapter explains catch rate and agreement in plain sentences; caveats grouped in one paragraph.
 
 Images unchanged: no label or number changed, and each was viewed with no clipped or overlapping text. No tool is named as builder; no local paths or secrets in the guide. Not published.
+
+## Author answers folded in, 2026-11-05
+
+Source: answers appended to the 13 questions in gate-enforced-rag.questions.md. Label: Author says. Clone pulled (git pull) and re-read for the dsh and "Scope Confirmed" checks only (README, STATUS and gates.yaml mention them as before). Guide edited; no repository change. His probable tool name (Q5) stays in the questions file only.
+
+- Q1: Does not recall why he built it or why mechanical first; probably an idea built on learning more about RAG systems. Stated with "probably".
+- Q2: Not sure whether it feeds a later project, maybe; time is not an issue; Phase 6 and live work not chosen. Stated.
+- Q3: Does not recall what dsh is. Guide keeps its own generic description of the outside plugin host and adds that he does not recall.
+- Q4: Does not recall whether it relates to rag-audit; it might. Guide says so and still does not link.
+- Q5: Probable tool name given; not corroborated by the repository. Guide says only "AI coding agents"; no build tool named.
+- Q6: Does not recall specifics; usually reviews and approves or asks for edits. Stated as his usual practice, not as a record for this project.
+- Q7: Assumes he approved "Scope Confirmed" (gates.yaml line 12) but does not recall; no approval record committed. Stated as an assumption.
+- Q8: Does not recall whether he knew of the parking-garage and "F 35" spacing findings; fix versus document not decided. Stated.
+- Q9: Unsure why the cut-off is 0.34. Stated.
+- Q10: Memory of the project is very shaky; guide says plainly in the interview chapter that he would need to study it.
+- Q11: Does not recall what was hardest or what surprised him. Stated.
+- Q12: Nobody else has used or looked at it. Stated in the status line.
+- Q13: Probably unfinished; relevance check, filter fix and test on real model output all open for completion. Stated; order is offered only as one possible order.
+- Wording: removed "I directed the scope, plan, architecture and preferences", "my answer is", "I found evasions" and "my attacks" (the probes in E4 were run for this guide, not by him); "I directed" in the interview chapter replaced.
+
